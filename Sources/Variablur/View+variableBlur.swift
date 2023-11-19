@@ -44,9 +44,11 @@ public extension View {
 #Preview("Image background blur behind UI") {
 	VStack(alignment: .leading) {
 		Spacer()
-		Text("Heading")
+			.frame(maxWidth: .infinity)
+		Text("Jazzy Squiggle")
 			.font(.headline)
-		Text("Lorem ipsum dolor sit amet")
+		Text("You can read this content because the squiggle is blurred behind it.")
+			.font(.subheadline)
 		HStack {
 			Button { } label: {
 				Text("Do Something")
@@ -55,22 +57,23 @@ public extension View {
 				Text("Do Something Else")
 			}
 		}
-		Text("Lorem ipsum dolor sit amet")
+		Spacer()
+		Text("Plot twist: nothing really happens when you press these buttons.")
 			.font(.caption2)
 			.foregroundStyle(.secondary)
 	}
 	.frame(width: 300, height: 300)
 	.scenePadding()
 	.background {
-		Image(systemName: "figure.walk.circle")
+		Image(systemName: "scribble.variable")
 			.foregroundStyle(Color.cyan)
 			.font(.system(size: 300))
-			.variableBlur(radius: 30) { size, context in
+			.variableBlur(radius: 40) { size, context in
 				context.fill(
 					Path(CGRect(origin: .zero, size: size)),
 					with: .linearGradient(
 						.init(colors: [.clear, .white]),
-						startPoint: .init(x: 0, y: 200),
+						startPoint: .init(x: 0, y: 150),
 						endPoint: .init(x: 0, y: size.height)
 					)
 				)
