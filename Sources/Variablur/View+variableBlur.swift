@@ -42,7 +42,7 @@ public extension View {
 }
 
 #Preview("Image background blur behind UI") {
-	VStack(alignment: .leading) {
+	VStack(alignment: .center) {
 		Spacer()
 			.frame(maxWidth: .infinity)
 		Text("Jazzy Squiggle")
@@ -51,19 +51,21 @@ public extension View {
 			.font(.subheadline)
 		HStack {
 			Button { } label: {
-				Text("Do Something")
+				Text("Like")
 			}
 			Button { } label: {
-				Text("Do Something Else")
+				Text("Subscribe")
 			}
 		}
-		Spacer()
 		Text("Plot twist: nothing really happens when you press these buttons.")
 			.font(.caption2)
 			.foregroundStyle(.secondary)
 	}
-	.frame(width: 300, height: 300)
+	.buttonStyle(.bordered)
+	.multilineTextAlignment(.center)
+	.environment(\.backgroundMaterial, .thin) // this allows the buttons to take on their overlay appearance which looks good over the variable blur
 	.scenePadding()
+	.frame(width: 300, height: 300)
 	.background {
 		Image(systemName: "scribble.variable")
 			.foregroundStyle(Color.cyan)
