@@ -13,10 +13,12 @@ inline half gaussianKernel1D(half x, half sigma) {
 half4 gaussianBlurX(float2 pos, SwiftUI::Layer layer, half radius, half maxSamples) {
 	const half interval = max(1.0h, radius / maxSamples);
 
+	// take the first sample
 	const half weight = gaussianKernel1D(0.0h, radius / 2.0h);
 	half4 total = layer.sample(pos) * weight;
 	half count = weight;
-		
+	
+	// if the radius is high enough to take more samples, take them
 	if(interval <= radius) {
 		for (half distance = interval; distance <= radius; distance += interval) {
 			const half weight = gaussianKernel1D(distance, radius / 2.0h);
@@ -25,7 +27,8 @@ half4 gaussianBlurX(float2 pos, SwiftUI::Layer layer, half radius, half maxSampl
 			total += layer.sample(float2(half(pos.x) + distance, pos.y)) * weight;
 		}
 	}
-		
+	
+	// return the weighted average of all samples
 	return total / count;
 }
 
@@ -33,10 +36,12 @@ half4 gaussianBlurX(float2 pos, SwiftUI::Layer layer, half radius, half maxSampl
 half4 gaussianBlurY(float2 pos, SwiftUI::Layer layer, half radius, half maxSamples) {
 	const half interval = max(1.0h, radius / maxSamples);
 	
+	// take the first sample
 	const half weight = gaussianKernel1D(0.0h, radius / 2.0h);
 	half4 total = layer.sample(pos) * weight;
 	half count = weight;
 	
+	// if the radius is high enough to take more samples, take them
 	if(interval <= radius) {
 		for (half distance = interval; distance <= radius; distance += interval) {
 			const half weight = gaussianKernel1D(distance, radius / 2.0h);
@@ -46,6 +51,7 @@ half4 gaussianBlurY(float2 pos, SwiftUI::Layer layer, half radius, half maxSampl
 		}
 	}
 	
+	// return the weighted average of all samples
 	return total / count;
 }
 
