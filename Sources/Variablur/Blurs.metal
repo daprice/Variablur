@@ -10,60 +10,68 @@ inline half gaussianKernel1D(half x, half sigma) {
 }
 
 // Calculate blurred pixel value using the weighted average of multiple samples along the X axis
-half4 smoothBlurX(float2 pos, SwiftUI::Layer layer, float radius, float quality) {
-	half4 total = half4(0.0h, 0.0h, 0.0h, 0.0h);
-	half count = 0.0h;
-	
-	const half maxX = pos.x + radius;
-	const half interval = max(1.0h, half(radius) / 10.0h) * (1.0h / max(0.1h, min(1.0h, half(quality))));
-	for(half x = pos.x - radius; x <= maxX; x += interval) {
-		const half weight = gaussianKernel1D(x - half(pos.x), half(radius)/2.0h);
-		total += layer.sample(float2(x, pos.y)) * weight;
-		count += weight;
+half4 gaussianBlurX(float2 pos, SwiftUI::Layer layer, half radius, half maxSamples) {
+	const half interval = max(1.0h, radius / maxSamples);
+
+	const half weight = gaussianKernel1D(0.0h, radius / 2.0h);
+	half4 total = layer.sample(pos) * weight;
+	half count = weight;
+		
+	if(interval <= radius) {
+		for (half distance = interval; distance <= radius; distance += interval) {
+			const half weight = gaussianKernel1D(distance, radius / 2.0h);
+			count += weight * 2.0h;
+			total += layer.sample(float2(half(pos.x) - distance, pos.y)) * weight;
+			total += layer.sample(float2(half(pos.x) + distance, pos.y)) * weight;
+		}
 	}
-	
+		
 	return total / count;
 }
 
 // Calculate blurred pixel value using the weighted average of multiple samples along the Y axis
-half4 smoothBlurY(float2 pos, SwiftUI::Layer layer, float radius, float quality) {
-	half4 total = half4(0.0h, 0.0h, 0.0h, 0.0h);
-	half count = 0.0h;
+half4 gaussianBlurY(float2 pos, SwiftUI::Layer layer, half radius, half maxSamples) {
+	const half interval = max(1.0h, radius / maxSamples);
 	
-	const half maxY = pos.y + radius;
-	const half interval = max(1.0h, half(radius) / 10.0h) * (1.0h / max(0.1h, min(1.0h, half(quality))));
-	for(half y = pos.y - radius; y <= maxY; y += interval) {
-		const half weight = gaussianKernel1D(y - half(pos.y), half(radius)/2.0h);
-		total += layer.sample(float2(pos.x, y)) * weight;
-		count += weight;
+	const half weight = gaussianKernel1D(0.0h, radius / 2.0h);
+	half4 total = layer.sample(pos) * weight;
+	half count = weight;
+	
+	if(interval <= radius) {
+		for (half distance = interval; distance <= radius; distance += interval) {
+			const half weight = gaussianKernel1D(distance, radius / 2.0h);
+			count += weight * 2.0h;
+			total += layer.sample(float2(pos.x, half(pos.y) - distance)) * weight;
+			total += layer.sample(float2(pos.x, half(pos.y) + distance)) * weight;
+		}
 	}
 	
 	return total / count;
 }
 
 // Variable blur effect along the X axis that samples from a texture to determine the blur radius multiplier
-[[ stitchable ]] half4 varBlurX(float2 pos, SwiftUI::Layer layer, float radius, float quality, texture2d<half> mask, float2 size) {
+[[ stitchable ]] half4 varBlurX(float2 pos, SwiftUI::Layer layer, float radius, float maxSamples, texture2d<half> mask, float2 size) {
 	// sample the mask at the current position
 	const half4 maskSample = mask.sample(metal::sampler(metal::filter::linear), pos / size);
 	// determine the blur radius at this pixel based on the sample's alpha
-	const float pixelRadius = maskSample.a * radius;
+	const half pixelRadius = maskSample.a * half(radius);
 	// apply the blur if the effective radius is nonzero
 	if(pixelRadius >= 1) {
-		return smoothBlurX(pos, layer, pixelRadius, quality);
+		return gaussianBlurX(pos, layer, pixelRadius, maxSamples);
 	} else {
 		return layer.sample(pos);
 	}
 }
 
 // Variable blur effect along the Y axis that samples from a texture to determine the blur radius multiplier
-[[ stitchable ]] half4 varBlurY(float2 pos, SwiftUI::Layer layer, float radius, float quality, texture2d<half> mask, float2 size) {
+[[ stitchable ]] half4 varBlurY(float2 pos, SwiftUI::Layer layer, float radius, float maxSamples, texture2d<half> mask, float2 size) {
 	// sample the mask at the current position
 	const half4 maskSample = mask.sample(metal::sampler(metal::filter::linear), pos / size);
 	// determine the blur radius at this pixel based on the sample's alpha
-	const float pixelRadius = maskSample.a * radius;
+	const half pixelRadius = maskSample.a * half(radius);
 	// apply the blur if the effective radius is nonzero
 	if(pixelRadius >= 1) {
-		return smoothBlurY(pos, layer, pixelRadius, quality);
+		return gaussianBlurY(pos, layer, pixelRadius, maxSamples);
 	} else {
 		return layer.sample(pos);
 	}

@@ -13,7 +13,7 @@ public extension View {
 	/// Applies a variable blur to the view, with the blur radius at each pixel determined by a mask that you create.
 	/// - Parameters:
 	///   - radius: The radial size of the blur in areas where the mask is fully opaque.
-	///   - quality: The sampling ratio when computing the blur. Recommended values are 1 (default) for full quality, or 0.5 for a less GPU-intensive but somewhat blocky effect.
+	///   - maxSampleCount: The maximum number of samples the shader may take from the view's layer in each direction. Higher numbers produce a smoother, higher quality blur but are more GPU intensive. Values larger than `radius` have no effect. The default of 15 provides balanced results but may cause banding on some images at larger blur radii.
 	///   - maskRenderer: A rendering closure to draw the mask used to determine the intensity of the blur at each pixel. The closure receives a `GeometryProxy` with the view's layout information, and a `GraphicsContext` to draw into.
 	/// - Returns: The view with the variable blur effect applied.
 	///
@@ -24,13 +24,13 @@ public extension View {
 	/// - Important: Because this effect is implemented as a SwiftUI `layerEffect`, it is subject to the same limitations. Namely, views backed by AppKit or UIKit views may not render. Instead, they log a warning and display a placeholder image to highlight the error.
 	func variableBlur(
 		radius: CGFloat,
-		quality: CGFloat = 1,
+		maxSampleCount: Int = 15,
 		maskRenderer: @escaping (GeometryProxy, inout GraphicsContext) -> Void
 	) -> some View {
 		self.visualEffect { content, geometryProxy in
 			content.variableBlur(
 				radius: radius,
-				quality: quality,
+				maxSampleCount: maxSampleCount,
 				mask: Image(size: geometryProxy.size, renderer: { context in
 					maskRenderer(geometryProxy, &context)
 				}),
