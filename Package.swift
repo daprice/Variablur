@@ -21,8 +21,5 @@ let package = Package(
             name: "Variablur",
 			resources: [.process("Blurs.metal")]
 		),
-        .testTarget(
-            name: "VariablurTests",
-            dependencies: ["Variablur"]),
     ]
 )
