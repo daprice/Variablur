@@ -12,7 +12,7 @@ half4 smoothBlurX(float2 pos, SwiftUI::Layer layer, float radius, float quality)
 	half maxX = pos.x + radius;
 	half interval = max(1.0h, half(radius) / 10.0h) * (1.0h / max(0.1h, min(1.0h, half(quality))));
 	for(half x = pos.x - radius; x <= maxX; x += interval) {
-		half weight = cos(((x - half(pos.x)) / half(radius)) * M_PI_H_HALVED);
+		half weight = cos(((x - half(pos.x)) / half(radius)) * M_PI_H_HALVED); // TODO: make this a proper gaussian curve and move it to its own function
 		total += layer.sample(float2(x, pos.y)) * weight;
 		count += weight;
 	}
