@@ -10,8 +10,8 @@ With Variablur, you can create variable blur effects that you control with a mas
 
 ### Applying variable blur to a view
 
-- ``SwiftUI/View/variableBlur(radius:quality:maskRenderer:)``
+- ``SwiftUI/View/variableBlur(radius:maxSampleCount:prioritizeVerticalPass:maskRenderer:)``
 
 ### Applying variable blur as a VisualEffect
 
-- ``SwiftUI/VisualEffect/variableBlur(radius:quality:mask:maskSize:isEnabled:)``
+- ``SwiftUI/VisualEffect/variableBlur(radius:maxSampleCount:prioritizeVerticalPass:mask:maskSize:isEnabled:)``

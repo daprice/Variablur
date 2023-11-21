@@ -55,29 +55,15 @@ half4 gaussianBlurY(float2 pos, SwiftUI::Layer layer, half radius, half maxSampl
 	return total / count;
 }
 
-// Variable blur effect along the X axis that samples from a texture to determine the blur radius multiplier
-[[ stitchable ]] half4 varBlurX(float2 pos, SwiftUI::Layer layer, float radius, float maxSamples, texture2d<half> mask, float2 size) {
+// Variable blur effect along the specified axis that samples from a texture to determine the blur radius multiplier
+[[ stitchable ]] half4 variableBlur(float2 pos, SwiftUI::Layer layer, float radius, float maxSamples, texture2d<half> mask, float2 size, float vertical) {
 	// sample the mask at the current position
 	const half4 maskSample = mask.sample(metal::sampler(metal::filter::linear), pos / size);
 	// determine the blur radius at this pixel based on the sample's alpha
 	const half pixelRadius = maskSample.a * half(radius);
 	// apply the blur if the effective radius is nonzero
 	if(pixelRadius >= 1) {
-		return gaussianBlurX(pos, layer, pixelRadius, maxSamples);
-	} else {
-		return layer.sample(pos);
-	}
-}
-
-// Variable blur effect along the Y axis that samples from a texture to determine the blur radius multiplier
-[[ stitchable ]] half4 varBlurY(float2 pos, SwiftUI::Layer layer, float radius, float maxSamples, texture2d<half> mask, float2 size) {
-	// sample the mask at the current position
-	const half4 maskSample = mask.sample(metal::sampler(metal::filter::linear), pos / size);
-	// determine the blur radius at this pixel based on the sample's alpha
-	const half pixelRadius = maskSample.a * half(radius);
-	// apply the blur if the effective radius is nonzero
-	if(pixelRadius >= 1) {
-		return gaussianBlurY(pos, layer, pixelRadius, maxSamples);
+		return vertical == 0.0 ? gaussianBlurX(pos, layer, pixelRadius, maxSamples) : gaussianBlurY(pos, layer, pixelRadius, maxSamples);
 	} else {
 		return layer.sample(pos);
 	}

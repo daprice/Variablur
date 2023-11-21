@@ -15,11 +15,12 @@ public extension VisualEffect {
 	
 	/// Applies a variable blur, with the blur radius at each pixel determined by a mask image. Requires a mask image that matches the size of the view's layer.
 	///
-	/// - Tip: Rather than using this effect directly, try ``SwiftUI/View/variableBlur(radius:maxSampleCount:maskRenderer:)`` which automatically handles creating a mask image of the correct size for you to draw into.
+	/// - Tip: Rather than using this effect directly, try ``SwiftUI/View/variableBlur(radius:maxSampleCount:prioritizeVerticalPass:maskRenderer:)`` which automatically handles creating a mask image of the correct size for you to draw into.
 	///
 	/// - Parameters:
 	///   - radius: The maximum radial size of the blur in areas where the mask is fully opaque.
 	///   - maxSampleCount: The maximum number of samples to take from the view's layer in each direction. Higher numbers produce a smoother, higher quality blur but are more GPU intensive. Values larger than `radius` have no effect.
+	///   - prioritizeVerticalPass: Whether or not to perform the vertical blur pass before the horizontal one. Changing this parameter may reduce smearing artifacts. Defaults to `false`, i.e. perform the horizontal pass first.
 	///   - mask: An image with an alpha channel to use as mask to determine the strength of the blur effect at each pixel. Fully transparent areas are unblurred; fully opaque areas are blurred by the full radius; partially transparent areas are blurred by the radius multiplied by the alpha value. The mask image should match the size of the view's layer.
 	///   - maskSize: The size (resolution) of the mask image. Should match the size of the view the effect is applied to.
 	///   - isEnabled: Whether the effect is enabled or not.
@@ -29,26 +30,29 @@ public extension VisualEffect {
 	func variableBlur(
 		radius: CGFloat,
 		maxSampleCount: Int = 15,
+		prioritizeVerticalPass: Bool = false,
 		mask: Image,
 		maskSize: CGSize,
 		isEnabled: Bool = true
 	) -> some VisualEffect {
 		self.layerEffect(
-			library.varBlurX(
+			library.variableBlur(
 				.float(radius),
 				.float(CGFloat(maxSampleCount)),
 				.image(mask),
-				.float2(maskSize)
+				.float2(maskSize),
+				.float(prioritizeVerticalPass ? 1 : 0)
 			),
 			maxSampleOffset: CGSize(width: radius , height: radius),
 			isEnabled: isEnabled
 		)
 		.layerEffect(
-			library.varBlurY(
+			library.variableBlur(
 				.float(radius),
 				.float(CGFloat(maxSampleCount)),
 				.image(mask),
-				.float2(maskSize)
+				.float2(maskSize),
+				.float(prioritizeVerticalPass ? 0 : 1)
 			),
 			maxSampleOffset: CGSize(width: radius, height: radius),
 			isEnabled: isEnabled

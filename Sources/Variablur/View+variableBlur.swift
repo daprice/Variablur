@@ -15,6 +15,7 @@ public extension View {
 	/// - Parameters:
 	///   - radius: The radial size of the blur in areas where the mask is fully opaque.
 	///   - maxSampleCount: The maximum number of samples the shader may take from the view's layer in each direction. Higher numbers produce a smoother, higher quality blur but are more GPU intensive. Values larger than `radius` have no effect. The default of 15 provides balanced results but may cause banding on some images at larger blur radii.
+	///   - prioritizeVerticalPass: Whether or not to perform the vertical blur pass before the horizontal one. Changing this parameter may reduce smearing artifacts. Defaults to `false`, i.e. perform the horizontal pass first.
 	///   - maskRenderer: A rendering closure to draw the mask used to determine the intensity of the blur at each pixel. The closure receives a `GeometryProxy` with the view's layout information, and a `GraphicsContext` to draw into.
 	/// - Returns: The view with the variable blur effect applied.
 	///
@@ -22,16 +23,20 @@ public extension View {
 	///
 	/// - Tip: To achieve a progressive blur or gradient blur, draw a gradient from transparent to opaque in your mask image where you want the transition from clear to blurred to take place.
 	///
+	/// - Note: Because the blur is split into horizontal and vertical passes for performance, certain mask images over certain patterns may cause "smearing" artifacts along one axis. Changing the `prioritizeVerticalPass` parameter may reduce this, but may cause smearing in the other direction.. To avoid smearing entirely, avoid drawing hard edges in your `maskRenderer`.
+	///
 	/// - Important: Because this effect is implemented as a SwiftUI `layerEffect`, it is subject to the same limitations. Namely, views backed by AppKit or UIKit views may not render. Instead, they log a warning and display a placeholder image to highlight the error.
 	func variableBlur(
 		radius: CGFloat,
 		maxSampleCount: Int = 15,
+		prioritizeVerticalPass: Bool = false,
 		maskRenderer: @escaping (GeometryProxy, inout GraphicsContext) -> Void
 	) -> some View {
 		self.visualEffect { content, geometryProxy in
 			content.variableBlur(
 				radius: radius,
 				maxSampleCount: maxSampleCount,
+				prioritizeVerticalPass: prioritizeVerticalPass,
 				mask: Image(size: geometryProxy.size, renderer: { context in
 					maskRenderer(geometryProxy, &context)
 				}),
@@ -84,7 +89,7 @@ public extension View {
 #Preview("Blur masked using a shape") {
 	Image(systemName: "circle.hexagongrid")
 		.font(.system(size: 300))
-		.variableBlur(radius: 30) { geometryProxy, context in
+		.variableBlur(radius: 30, prioritizeVerticalPass: true) { geometryProxy, context in
 			// draw a shape in an opaque color to apply the variable blur within the shape
 			context.fill(
 				Path(
