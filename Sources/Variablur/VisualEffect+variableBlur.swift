@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+@available(iOS 17, macOS 14, macCatalyst 17, tvOS 17, visionOS 1, *)
 internal let library = ShaderLibrary.bundle(Bundle.module)
 
+@available(iOS 17, macOS 14, macCatalyst 17, tvOS 17, visionOS 1, *)
 public extension VisualEffect {
 	
 	/// Applies a variable blur, with the blur radius at each pixel determined by a mask image.

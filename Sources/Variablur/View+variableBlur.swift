@@ -7,13 +7,14 @@
 
 import SwiftUI
 
+@available(iOS 17, macOS 14, macCatalyst 17, tvOS 17, visionOS 1, *)
 public extension View {
 	
 	/// Applies a variable blur to the view, with the blur radius at each pixel determined by a mask that you create.
 	/// - Parameters:
 	///   - radius: The radial size of the blur in areas where the mask is fully opaque.
 	///   - quality: The sampling ratio when computing the blur. Recommended values are 1 (default) for full quality, or 0.5 for a less GPU-intensive but somewhat blocky effect.
-	///   - maskRenderer: A rendering closure to draw the mask used to determine the intensity of the blur at each pixel. The closure receives a ``SwiftUI/GeometryProxy`` with the view's layout information, and a ``SwiftUI/GraphicsContext`` to draw into.
+	///   - maskRenderer: A rendering closure to draw the mask used to determine the intensity of the blur at each pixel. The closure receives a `GeometryProxy` with the view's layout information, and a `GraphicsContext` to draw into.
 	/// - Returns: The view with the variable blur effect applied.
 	///
 	/// The strength of the blur effect at any point on the view is determined by the transparency of the mask at that point. Areas where the mask is fully opaque are blurred by the full radius; areas where the mask is partially transparent are blurred by a proportionally smaller radius. Areas where the mask is fully transparent are left unblurred.
