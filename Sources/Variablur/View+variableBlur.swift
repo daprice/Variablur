@@ -11,6 +11,7 @@ import SwiftUI
 public extension View {
 	
 	/// Applies a variable blur to the view, with the blur radius at each pixel determined by a mask that you create.
+	/// 
 	/// - Parameters:
 	///   - radius: The radial size of the blur in areas where the mask is fully opaque.
 	///   - maxSampleCount: The maximum number of samples the shader may take from the view's layer in each direction. Higher numbers produce a smoother, higher quality blur but are more GPU intensive. Values larger than `radius` have no effect. The default of 15 provides balanced results but may cause banding on some images at larger blur radii.

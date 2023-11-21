@@ -4,7 +4,7 @@ Apply variable blur effects to SwiftUI views.
 
 ## Overview
 
-With Variablur, you can create variable blur effects powered by a Metal shader. Control the strength of the blur at any position using a mask that you draw.
+With Variablur, you can create variable blur effects that you control with a mask. Because you draw the mask using a `GraphicsContext`, it can contain gradients, shapes, text, pre-rendered images, or anything else you can draw into a `GraphicsContext`.
 
 ## Topics
 
