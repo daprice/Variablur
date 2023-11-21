@@ -103,7 +103,7 @@ public extension View {
 		}
 }
 
-#Preview("Blur excluding a shape") {
+#Preview("Blur excluding a mask shape") {
 	Image(systemName: "circle.hexagongrid")
 		.font(.system(size: 300))
 		.variableBlur(radius: 30) { geometryProxy, context in
@@ -131,7 +131,7 @@ public extension View {
 		}
 }
 
-#Preview("Variable blur around a shape") {
+#Preview("Variable blur around a mask shape") {
 	Image(systemName: "circle.hexagongrid")
 		.font(.system(size: 300))
 		.variableBlur(radius: 30) { geometryProxy, context in
