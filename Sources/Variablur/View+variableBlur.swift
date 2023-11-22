@@ -167,40 +167,54 @@ public extension View {
 	VStack(alignment: .center) {
 		Spacer()
 			.frame(maxWidth: .infinity)
-		Text("Jazzy Squiggle")
+		Text("This is a snowflake")
 			.font(.headline)
-		Text("You can read this content because the squiggle is blurred behind it.")
-			.font(.subheadline)
-		HStack {
+			.fontWidth(.expanded)
+		Text("With a variable blur powered by Metal.")
+		HStack() {
 			Button { } label: {
-				Text("Like")
+				Text("Let It Snow")
 			}
 			Button { } label: {
-				Text("Subscribe")
+				Text("Don't Let It Snow")
 			}
 		}
+		.padding(8)
 		Text("Plot twist: nothing really happens when you press these buttons.")
-			.font(.caption2)
-			.foregroundStyle(.secondary)
+			.textScale(.secondary)
+			.opacity(0.6)
+		#if !os(macOS)
+		Spacer(minLength: 100)
+		#endif
 	}
 	.buttonStyle(.bordered)
+	.tint(.primary)
 	.multilineTextAlignment(.center)
 	.environment(\.backgroundMaterial, .thin) // this allows the buttons to take on their overlay appearance which looks good over the variable blur
 	.scenePadding()
-	.frame(width: 300, height: 300)
 	.background {
-		Image(systemName: "scribble.variable")
-			.foregroundStyle(Color.cyan)
-			.font(.system(size: 300))
-			.variableBlur(radius: 40) { geometryProxy, context in
-				context.fill(
-					Path(CGRect(origin: .zero, size: geometryProxy.size)),
-					with: .linearGradient(
-						.init(colors: [.clear, .white]),
-						startPoint: .init(x: 0, y: 150),
-						endPoint: .init(x: 0, y: geometryProxy.size.height)
-					)
+		VStack {
+			Image(systemName: "snowflake")
+				.resizable()
+				.scaledToFill()
+				.fontWeight(.heavy)
+				.padding(180)
+				.foregroundStyle(.white)
+		}
+		.drawingGroup()
+		.variableBlur(radius: 180) { geometryProxy, context in
+			// add a blur to the mask to smooth out where the variable blur begins
+			context.addFilter(.blur(radius: 40))
+			
+			context.fill(
+				Path(CGRect(origin: .zero, size: geometryProxy.size)),
+				with: .linearGradient(
+					.init(colors: [.clear, .white]),
+					startPoint: .init(x: 0, y: geometryProxy.size.height - 300),
+					endPoint: .init(x: 0, y: geometryProxy.size.height)
 				)
-			}
+			)
+		}
 	}
+	.background(.mint)
 }
