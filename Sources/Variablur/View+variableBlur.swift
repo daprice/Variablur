@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  View+variableBlur.swift
 //  
 //
 //  Created by Dale Price on 11/18/23.
@@ -216,5 +216,5 @@ public extension View {
 			)
 		}
 	}
-	.background(.mint)
+	.background(.mint.gradient)
 }
