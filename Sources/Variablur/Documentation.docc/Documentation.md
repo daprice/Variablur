@@ -16,8 +16,9 @@ To see live examples of some of the effects you can make, look at the Xcode Prev
 
 ### Applying variable blur to a view
 
-- ``SwiftUI/View/variableBlur(radius:maxSampleCount:prioritizeVerticalPass:maskRenderer:)``
+- ``SwiftUI/View/variableBlur(radius:maxSampleCount:verticalPassFirst:maskRenderer:)``
+- ``SwiftUI/View/variableBlur(radius:maxSampleCount:verticalPassFirst:mask:)``
 
 ### Applying variable blur as a VisualEffect
 
-- ``SwiftUI/VisualEffect/variableBlur(radius:maxSampleCount:prioritizeVerticalPass:mask:maskSize:isEnabled:)``
+- ``SwiftUI/VisualEffect/variableBlur(radius:maxSampleCount:verticalPassFirst:mask:isEnabled:)``
