@@ -1,5 +1,8 @@
 # Variablur
 
+> [!NOTE]
+> This code is now included in the project that inspired it, [twostraws/Inferno](https://github.com/twostraws/Inferno). Consider using that package instead, as any future improvements or additional shaders are likely to end up there.
+
 With Variablur, you can create variable blur effects that you control with a mask. Because you draw the mask using a `GraphicsContext`, it can contain gradients, shapes, text, pre-rendered images, or anything else you can draw into a `GraphicsContext`.
 
 You can create gradient or progressive blurs, vignettes, "blur shadows", or many other effects.
